@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js" integrity="sha512-/hVAZO5POxCKdZMSLefw30xEVwjm94PAV9ynjskGbIpBvHO9EBplEcdUlBdCKutpZsF+La8Ag4gNrG0gAOn3Ig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+        <link href="https://unpkg.com/nes.css/css/nes.css" rel="stylesheet" />
+    
+        <style>
+          html, body, pre, code, kbd, samp {
+              font-family: "Press Start 2P";
+          }
+        </style>
+    </head>
+    <body>
+        <div id="invite" style="max-width: 500px; margin: auto; justify-content: center; margin-top: 25px;">
+            <div id="greeting_line" class="nes-container is-rounded" >
+            </div>
+            <div id="message_body" style="margin-top: 25px;">
+                
+                <img src="https://thumbs.gfycat.com/AccurateGloomyBlueshark-size_restricted.gif" width="500px">
+            </div>
+        </div>
+    </body>
+    <script>
+        params = new URLSearchParams(window.location.search);
+        sender = decodeURI(params.get('sender'));
+        document.querySelector('#greeting_line').innerHTML = DOMPurify.sanitize(`<h3>Greetings! ${sender} has a message for you! Get ready...</h3>`);
+        recipients = decodeURI(params.get('recipients'));
+        if (recipients.length) {
+            result = {
+                "message": decodeURI(params.get('message')),
+                "render": function() {
+                    htmlDirty = result.message + '<br><div class="nes-container with-title"><p class="title">Invitees:</p><ul class="nes-list is-disc">';
+                    recipients.split(',').forEach(name => htmlDirty += `<li>${name}</li>`);
+                    htmlDirty += '</ul>'
+                    document.querySelector('#message_body').innerHTML = DOMPurify.sanitize(htmlDirty);
+                }
+            }
+        }
+
+        try {
+            setTimeout(result.render, 3000);
+        } catch (e){
+            result = {
+                "message": "I am Error",
+                "render": function() {
+                    document.querySelector('#message_body').innerHTML = result.message;
+                }
+            }
+            result.render();
+        }
+    </script>
+</html>

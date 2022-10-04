@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js" integrity="sha512-/hVAZO5POxCKdZMSLefw30xEVwjm94PAV9ynjskGbIpBvHO9EBplEcdUlBdCKutpZsF+La8Ag4gNrG0gAOn3Ig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    </head>
+    <body>
+        <div id="invite" style="max-width: 500px; margin: auto; justify-content: center;">
+            <div id="greeting_line" ></div>
+            <div id="message_body">
+                <img src="https://thumbs.gfycat.com/AccurateGloomyBlueshark-size_restricted.gif">
+            </div>
+        </div>
+    </body>
+    <script>
+        params = new URLSearchParams(window.location.search);
+        sender = decodeURI(params.get('sender'));
+        document.querySelector('#greeting_line').innerHTML = DOMPurify.sanitize(`<h1>Greetings! ${sender} has a message for you! Get ready...</h1>`);
+        recipients = decodeURI(params.get('recipients'));
+        if (recipients.length) {
+            result = {
+                "message": decodeURI(params.get('message')),
+                "render": function() {
+                    htmlDirty = result.message + '<br>Invitees:<ul>';
+                    recipients.split(',').forEach(name => htmlDirty += `<li>${name}</li>`);
+                    htmlDirty += '</ul>'
+                    document.querySelector('#message_body').innerHTML = DOMPurify.sanitize(htmlDirty);
+                }
+            }
+        }
+
+        try {
+            setTimeout(result.render, 3000);
+        } catch (e){
+            result = {
+                "message": "ERROR: ",
+                "render": function() {
+                    document.querySelector('#message_body').innerHTML = result.message;
+                }
+            }
+            result.render();
+        }
+    </script>
+</html>
